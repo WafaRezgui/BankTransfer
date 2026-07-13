@@ -1,0 +1,26 @@
+# Maven
+target/
+*.class
+
+# IntelliJ
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# Angular / Node
+node_modules/
+dist/
+.angular/
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Variables sensibles
+.env

@@ -26,5 +26,5 @@ jobs:
           distribution: 'temurin'
 
       - name: Build avec Maven
-        working-directory: ./geteway-service
+        working-directory: ./gateway-service
         run: mvn clean compile

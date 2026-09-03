@@ -1,10 +1,5 @@
 version: "3.9"
 
-# =========================================================
-# Réseau partagé : tous les services et l'infra communiquent
-# via ce réseau Docker interne, en s'appelant par leur "nom
-# de service" (ex: "kafka:9092", "auth-db:5432", etc.)
-# =========================================================
 networks:
   bank-network:
     driver: bridge
@@ -14,14 +9,15 @@ volumes:
   account-db-data:
   transaction-db-data:
   notification-db-data:
+  feedback-db-data:
+  
 
 services:
 
-  # ---------------------------------------------------------
-  # KAFKA (mode KRaft = pas besoin de Zookeeper, plus simple
-  # à faire tourner et c'est la version recommandée depuis
-  # Kafka 3.x / Confluent)
-  # ---------------------------------------------------------
+  # =========================================================
+  # KAFKA
+  # =========================================================
+
   kafka:
     image: apache/kafka:3.7.0
     container_name: kafka
@@ -30,110 +26,180 @@ services:
     environment:
       KAFKA_NODE_ID: 1
       KAFKA_PROCESS_ROLES: broker,controller
-      # Deux listeners : HOST (pour l'extérieur de Docker, ex: IntelliJ) et
-      # DOCKER (pour les autres conteneurs comme kafka-ui)
+
       KAFKA_LISTENERS: HOST://:9092,DOCKER://:9093,CONTROLLER://:9094
+
       KAFKA_ADVERTISED_LISTENERS: HOST://localhost:9092,DOCKER://kafka:9093
+
       KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
       KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9094
+
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: HOST:PLAINTEXT,DOCKER:PLAINTEXT,CONTROLLER:PLAINTEXT
+
       KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER
+
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
       CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk"
+
     networks:
       - bank-network
 
-  # (Optionnel mais très utile pour un stage : interface web
-  # pour visualiser les topics Kafka et les messages envoyés)
+
+  # =========================================================
+  # KAFKA UI
+  # =========================================================
+
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-ui
     ports:
       - "8085:8080"
+
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9093
+
     depends_on:
       - kafka
+
     networks:
       - bank-network
 
-  # ---------------------------------------------------------
-  # BASE DE DONNÉES : une instance PostgreSQL PAR microservice
-  # (pattern "Database per Service")
-  # ---------------------------------------------------------
+
+  # =========================================================
+  # AUTH DATABASE
+  # =========================================================
+
   auth-db:
     image: postgres:16-alpine
     container_name: auth-db
+
     environment:
       POSTGRES_DB: authdb
       POSTGRES_USER: auth_user
       POSTGRES_PASSWORD: auth_pass
+
     ports:
-      - "5433:5432"   # port différent en local pour éviter les conflits
+      - "5433:5432"
+
     volumes:
       - auth-db-data:/var/lib/postgresql/data
+
     networks:
       - bank-network
+
+
+  # =========================================================
+  # ACCOUNT DATABASE
+  # =========================================================
 
   account-db:
     image: postgres:16-alpine
     container_name: account-db
+
     environment:
       POSTGRES_DB: accountdb
       POSTGRES_USER: account_user
       POSTGRES_PASSWORD: account_pass
+
     ports:
       - "5434:5432"
+
     volumes:
       - account-db-data:/var/lib/postgresql/data
+
     networks:
       - bank-network
+
+
+  # =========================================================
+  # TRANSACTION DATABASE
+  # =========================================================
 
   transaction-db:
     image: postgres:16-alpine
     container_name: transaction-db
+
     environment:
       POSTGRES_DB: transactiondb
       POSTGRES_USER: transaction_user
       POSTGRES_PASSWORD: transaction_pass
+
     ports:
       - "5435:5432"
+
     volumes:
       - transaction-db-data:/var/lib/postgresql/data
+
     networks:
       - bank-network
+
+
+  # =========================================================
+  # NOTIFICATION DATABASE
+  # =========================================================
 
   notification-db:
     image: postgres:16-alpine
     container_name: notification-db
+
     environment:
       POSTGRES_DB: notificationdb
       POSTGRES_USER: notification_user
       POSTGRES_PASSWORD: notification_pass
+
     ports:
       - "5436:5432"
+
     volumes:
       - notification-db-data:/var/lib/postgresql/data
+
     networks:
       - bank-network
 
-  # ---------------------------------------------------------
-  # Les microservices Spring Boot seront ajoutés ici au fur
-  # et à mesure qu'on les crée (étapes suivantes).
-  # Pour l'instant on démarre juste l'infra (Kafka + DBs).
-  # ---------------------------------------------------------
 
-  # ---------------------------------------------------------
-  # FRONTEND ANGULAR, servi via Nginx (build de production).
-  # "build: ./frontend-angular" dit à Docker Compose de
-  # construire l'image depuis le Dockerfile présent dans ce
-  # dossier, au lieu d'utiliser une image toute prête.
-  # ---------------------------------------------------------
+  # =========================================================
+  # FEEDBACK DATABASE
+  # =========================================================
+
+  feedback-db:
+    image: postgres:16-alpine
+    container_name: feedback-db
+
+    environment:
+      POSTGRES_DB: feedbackdb
+      POSTGRES_USER: feedback_user
+      POSTGRES_PASSWORD: feedback_pass
+
+    ports:
+      - "5437:5432"
+
+    volumes:
+      - feedback-db-data:/var/lib/postgresql/data
+
+    networks:
+      - bank-network
+
+
+  # =========================================================
+  # FACE DATABASE
+  # =========================================================
+
+  
+
+
+  # =========================================================
+  # FRONTEND ANGULAR
+  # =========================================================
+
   frontend:
     build: ./frontend-angular
     container_name: frontend
+
     ports:
       - "8090:80"
+
     networks:
       - bank-network

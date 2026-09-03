@@ -21,6 +21,12 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.type.mapping: passwordResetRequested:com.banktransfer.auth_service.event.PasswordResetRequestedEvent
+
 jwt:
   secret: ${JWT_SECRET:5b7dbae714333303cd4543f5c41049358b3d985ed68feb58a414ce2b68d0a018}
   expiration: ${JWT_EXPIRATION:86400000}

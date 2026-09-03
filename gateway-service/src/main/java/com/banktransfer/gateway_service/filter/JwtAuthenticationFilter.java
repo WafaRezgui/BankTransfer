@@ -27,7 +27,9 @@ public class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     // Routes publiques : accessibles SANS token
     private final List<String> openApiEndpoints = List.of(
             "/auth/register",
-            "/auth/login"
+            "/auth/login",
+            "/auth/forgot-password",
+            "/auth/reset-password"
     );
 
     @Override

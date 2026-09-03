@@ -4,6 +4,7 @@ package com.banktransfer.auth_service.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -35,8 +36,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())   // pas de CSRF : on utilise des tokens JWT, pas des sessions/cookies
                 .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()   // login/register accessibles sans token
-                        .anyRequest().authenticated()               // tout le reste nécessite un token valide
+                        // Règle spécifique en premier : promotion de rôle réservée aux ADMIN
+                        .requestMatchers(HttpMethod.PATCH, "/auth/users/*/role").hasRole("ADMIN")
+                        // Le reste de /auth/** (register, login, etc.) reste public
+                        .requestMatchers("/auth/**").permitAll()
+                        // Tout le reste nécessite un token valide
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)   // pas de session serveur : chaque requête porte son token

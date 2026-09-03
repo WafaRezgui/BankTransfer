@@ -42,6 +42,10 @@ public class User implements UserDetails {   // <-- implémente UserDetails
 
     private LocalDateTime createdAt;
 
+    @Builder.Default
+    @Column(nullable = false)
+    private int failedLoginAttempts = 0;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

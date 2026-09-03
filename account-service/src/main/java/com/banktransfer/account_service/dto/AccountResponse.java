@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -21,5 +22,9 @@ public class AccountResponse {
     private BigDecimal balance;
     private AccountType type;
     private AccountStatus status;
+    private String cin;
+    private String adresse;
+    private String telephone;
+    private LocalDate dateNaissance;
     private LocalDateTime createdAt;
 }

@@ -23,6 +23,10 @@ spring:
           predicates:
             - Path=/transactions/**
 
+        - id: feedback-service-route
+          uri: http://localhost:8086
+          predicates:
+            - Path=/complaints/**,/feedbacks/**
       globalcors:
         cors-configurations:
           '[/**]':

@@ -1,6 +1,6 @@
 package com.banktransfer.auth_service.config;
 
-import com.banktransfer.auth_service.Repository.UserRepository ;
+import com.banktransfer.auth_service.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

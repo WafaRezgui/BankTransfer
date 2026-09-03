@@ -25,7 +25,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.type.mapping: balanceResult:com.banktransfer.account_service.event.BalanceReservationResultEvent,depositResult:com.banktransfer.account_service.event.DepositResultEvent
+        spring.json.type.mapping: balanceResult:com.banktransfer.account_service.event.BalanceReservationResultEvent,depositResult:com.banktransfer.account_service.event.DepositResultEvent,accountCreated:com.banktransfer.account_service.event.AccountCreatedEvent
     consumer:
       group-id: account-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -33,4 +33,4 @@ spring:
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: "com.banktransfer.account_service.event"
-        spring.json.type.mapping: transferRequested:com.banktransfer.account_service.event.TransferRequestedEvent,balanceResult:com.banktransfer.account_service.event.BalanceReservationResultEvent,depositRequested:com.banktransfer.account_service.event.DepositRequestedEvent
+        spring.json.type.mapping: transferRequested:com.banktransfer.account_service.event.TransferRequestedEvent,balanceResult:com.banktransfer.account_service.event.BalanceReservationResultEvent,depositRequested:com.banktransfer.account_service.event.DepositRequestedEvent,accountCreated:com.banktransfer.account_service.event.AccountCreatedEvent

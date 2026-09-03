@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,16 +26,28 @@ public class Account {
     private String iban;
 
     @Column(nullable = false)
-    private Long userId;   // référence vers l'User dans auth-service (pas de relation JPA directe entre microservices !)
+    private Long userId;
 
     @Column(nullable = false, precision = 19, scale = 2)
     private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
-    private AccountType type;   // ex: CHECKING, SAVINGS
+    private AccountType type;
 
     @Enumerated(EnumType.STRING)
-    private AccountStatus status;   // ex: ACTIVE, BLOCKED, CLOSED
+    private AccountStatus status;
+
+    @Column(nullable = false)
+    private String cin;
+
+    @Column(nullable = false)
+    private String adresse;
+
+    @Column(nullable = false)
+    private String telephone;
+
+    @Column(name = "date_naissance", nullable = false)
+    private LocalDate dateNaissance;
 
     private LocalDateTime createdAt;
 

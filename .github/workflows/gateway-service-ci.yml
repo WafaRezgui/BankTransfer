@@ -27,4 +27,8 @@ jobs:
 
       - name: Build avec Maven
         working-directory: ./gateway-service
+<
         run: mvn clean compile
+
+        run: mvn clean compile
+
